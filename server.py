@@ -7,12 +7,17 @@ import youtube
 app = Bottle()
 youtube = youtube.YouTube()
 
-STATIC_URL = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_URL = os.path.join(BASE_DIR, 'static')
 
 
 @app.route("/")
 def index():
 	return static_file('index.html', root=STATIC_URL)
+
+@app.route('/static/<filename:path>')
+def static(filename):
+    return static_file(filename, root=STATIC_URL)
 
 
 @app.route("/search")

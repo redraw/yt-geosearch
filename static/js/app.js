@@ -1,0 +1,1 @@
+var app = angular.module('YoutubeGeoSearch', ['ngMap', 'app.controllers', 'app.filters']);
