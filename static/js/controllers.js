@@ -1,77 +1,85 @@
 angular.module('app.controllers', [])
 
-  .controller('SearchCtrl', function($scope, $http, NgMap) {
-    $scope.debug = false;
-    $scope.params = {};
-    $scope.params.radius = 10;
-    $scope.params.limit = 10;
-    $scope.videos = [];
-    $scope.markers = [];
+  .controller('SearchCtrl', function($http, NgMap) {
+    var vm = this;
+    
+    vm.debug = false;
 
-    $scope.bounds = new google.maps.LatLngBounds();
+    vm.params = {};
+    vm.params.radius = 10;
+    vm.params.limit = 10;
 
-    NgMap.getMap().then(function(map) {
-      $scope.map = map;
-    });
-
-    $scope.placeChanged = function() {
-      $scope.reset();
-      $scope.place = this.getPlace();
-      $scope.search();
+    vm.reset = function() {
+      vm.videos = [];
+      vm.markers = [];
+      vm.params.next = undefined;
+      vm.bounds = new google.maps.LatLngBounds();
     }
 
-    $scope.search = function(action) {
+    NgMap.getMap().then(function(map) {
+      vm.reset();
+      vm.map = map;
+      vm.search();
+    }, function(err) { console.log(err)});
+
+    vm.placeChanged = function() {
+      vm.reset();
+      vm.place = this.getPlace();
+      vm.search();
+    }
+
+    vm.search = function() {
       var config = {
-        params: $scope.params
+        params: vm.params
       }
 
-      config.params.lat = $scope.map.center.lat()
-      config.params.lng = $scope.map.center.lng()
+      if (vm.place) {
+        config.params.lat = vm.place.geometry.location.lat()
+        config.params.lng = vm.place.geometry.location.lng()
+      } else {
+        config.params.lat = vm.map.center.lat()
+        config.params.lng = vm.map.center.lng()
+      }
 
       $http.get('/search', config).then(function(response) {
-        $scope.raw_results = response.data;
-        $scope.params.next = response.data.next;
+        vm.raw_results = response.data;
+        vm.params.next = response.data.next;
 
         // center map
-        $scope.map.setCenter($scope.place.geometry.location);
+        if (vm.place) {
+          vm.map.setCenter(vm.place.geometry.location);
+        }
 
         // add videos
-        $scope.addVideos(response.data.videos);
+        vm.addVideos(response.data.videos);
       })
     }
 
-    $scope.addVideos = function(videos){
+    vm.addVideos = function(videos){
       videos.forEach(function(video) {
         var location = video.recordingDetails.location;
         var latlng = new google.maps.LatLng(location.latitude, location.longitude);
 
-        $scope.videos.push(video);
+        vm.videos.push(video);
 
-        $scope.markers.push({
+        vm.markers.push({
           'id': video.id,
           'title': video.snippet.title,
           'position': [location.latitude, location.longitude]
         });
 
-        $scope.bounds.extend(latlng);
+        vm.bounds.extend(latlng);
       })
 
       // fit bounds
-      $scope.map.fitBounds($scope.bounds);
+      vm.map.fitBounds(vm.bounds);
     }
 
-    $scope.bounceMarker = function(id) {
-      $scope.map.markers[id].setAnimation(google.maps.Animation.BOUNCE);
+    vm.bounceMarker = function(id) {
+      vm.map.markers[id].setAnimation(google.maps.Animation.BOUNCE);
     }
 
-    $scope.unbounceMarker = function(id) {
-      $scope.map.markers[id].setAnimation(null);
-    }
-
-    $scope.reset = function() {
-      $scope.videos = [];
-      $scope.markers = [];
-      $scope.params.next = undefined;
-      $scope.bounds = new google.maps.LatLngBounds();
+    vm.unbounceMarker = function(id) {
+      vm.map.markers[id].setAnimation(null);
     }
   })

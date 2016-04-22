@@ -1,7 +1,9 @@
 import os
 from googleapiclient.discovery import build
 
-DEVELOPER_KEY = os.getenv('GOOGLE_API_KEY')
+import credentials
+
+DEVELOPER_KEY = os.getenv('GOOGLE_API_KEY', credentials.GOOGLE_API_KEY)
 
 
 class YouTube(object):
@@ -12,7 +14,7 @@ class YouTube(object):
         data = self.service.search().list(**kwargs).execute()
         return data
 
-    def videos(self, ids=[], **kwargs):
+    def videos(self, **kwargs):
         data = self.service.videos().list(**kwargs).execute()
         return data
 
