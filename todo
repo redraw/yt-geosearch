@@ -1,0 +1,4 @@
+[ ] replace $scope variables approach where possible
+[ ] search when geo location is found
+[ ] split SearchController into Search and Map controller?
+[ ] deploy to App Engine or wherever it fits!!

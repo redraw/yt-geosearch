@@ -2,6 +2,7 @@
 <html ng-app="YoutubeGeoSearch">
 <head>
   <title>Geo-Search Youtube</title>
+
   <link rel="stylesheet" type="text/css" href="//bootswatch.com/paper/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="/static/css/style.css">
   <!-- angular -->
@@ -20,7 +21,7 @@
 
       <form>
         <div class="form-group">
-          <input class="form-control" places-auto-complete size="80" ng-model="location" placeholder="Enter a place" 
+          <input class="form-control" places-auto-complete size="80" ng-model="location" placeholder="Enter a place"
             on-place-changed="placeChanged()" />
         </div>
         <div class="form-group">
@@ -42,7 +43,7 @@
         <div class="form-group">
           <label class="checkbox-inline">
             <input type="checkbox" ng-model="debug">debug
-          </label> 
+          </label>
         </div>
       </form>
 
@@ -80,15 +81,15 @@
 
     <div class="col-md-8 no-padding">
       <ng-map id="map" center="current-location" zoom="8" geo-fallback-center="la plata, argentina">
-        <marker ng-repeat="marker in markers" id="{{ marker.id }}" on-click="logMarker()"
+        <marker ng-repeat="marker in markers" id="{{ marker.id }}"
           position="{{ marker.position }}" title="{{ marker.title }}">
         </marker>
       </div>
     </div>
   </div>
-  
+
   <script type="text/javascript">
-  var app = angular.module('YoutubeGeoSearch', ['ngMap', 'app.controllers', 'app.filters']);
+  angular.module('YoutubeGeoSearch', ['ngMap', 'app.controllers', 'app.filters']);
   </script>
 
   <script src="/static/js/controllers.js"></script>

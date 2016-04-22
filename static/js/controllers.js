@@ -1,5 +1,5 @@
 angular.module('app.controllers', [])
-  
+
   .controller('SearchCtrl', function($scope, $http, NgMap) {
     $scope.debug = false;
     $scope.params = {};
@@ -17,8 +17,6 @@ angular.module('app.controllers', [])
     $scope.placeChanged = function() {
       $scope.reset();
       $scope.place = this.getPlace();
-      $scope.params.lat = $scope.place.geometry.location.lat();
-      $scope.params.lng = $scope.place.geometry.location.lng()
       $scope.search();
     }
 
@@ -26,6 +24,9 @@ angular.module('app.controllers', [])
       var config = {
         params: $scope.params
       }
+
+      config.params.lat = $scope.map.center.lat()
+      config.params.lng = $scope.map.center.lng()
 
       $http.get('/search', config).then(function(response) {
         $scope.raw_results = response.data;
@@ -67,7 +68,6 @@ angular.module('app.controllers', [])
       $scope.map.markers[id].setAnimation(null);
     }
 
-    // TODO: como reseteo el scope?!
     $scope.reset = function() {
       $scope.videos = [];
       $scope.markers = [];
